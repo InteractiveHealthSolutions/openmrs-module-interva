@@ -1,40 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
+
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
- 
-    <!--
-    	See http://wiki.openmrs.org/display/docs/Module+liquibase+File for 
-    	documentation on this file.
-    
-        See http://www.liquibase.org/manual/home#available_database_refactorings
-        for a list of supported elements and attributes
-    -->
- 
- 	<!-- Uncomment this and edit the values below to use this file
- 	
-	<changeSet id="mymoduleid-2010-05-25-15:50" author="bwolfe">
-		<preConditions onFail="MARK_RAN">
-			<not><tableExists tableName="mymoduleid_myobject"/></not>
+
+    <changeSet id="interva-20150506-1" author="maimoonak">
+        <preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="interva_icd10_mapping"/></not>
 		</preConditions>
-		<comment>
-			Creating the mymoduleid_myobject table
-		</comment>
-		<createTable tableName="mymoduleid_myobject">
-			<column name="mymoduleid_myobject_id" type="int">
-				<constraints primaryKey="true" nullable="false"/>
+        <comment>Adding interva_icd10_mapping table</comment>
+        <createTable tableName="interva_icd10_mapping">
+            <column name="interva_icd10_mapping_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="interva_result" type="varchar(255)"/>
+            <column name="interva_code" type="varchar(255)"/>
+            <column name="icd10_code" type="varchar(2555)"/>
+            <column name="display_text" type="varchar(255)"/>
+
+            <column name="description" type="varchar(255)"/>
+			<column name="date_created" type="DATETIME">
+				<constraints nullable="false" />
 			</column>
-			<column name="firstname" type="varchar(255)"/>
-			<column name="lastname" type="varchar(255)"/>
-			<column name="username" type="varchar(255)">
-				<constraints unique="true" nullable="false"/>
+			<column name="creator" type="int">
+				<constraints nullable="false" />
 			</column>
-			<column name="testid" type="int" />
-		</createTable>
-    </changeSet>
-    
-    -->
- 
+			<column name="date_changed" type="DATETIME" />
+			<column name="changed_by" type="int" />
+			<column name="voided" type="boolean" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_voided" type="DATETIME" />
+			<column name="voided_by" type="int" />
+			<column name="void_reason" type="varchar(1000)" />
+        </createTable>
+        <addForeignKeyConstraint constraintName="interva_icd10_mapping_creator"
+			baseTableName="interva_icd10_mapping" baseColumnNames="creator"
+			referencedTableName="users" referencedColumnNames="user_id" />
+		<addForeignKeyConstraint constraintName="interva_icd10_mapping_changed_by"
+			baseTableName="interva_icd10_mapping" baseColumnNames="changed_by"
+			referencedTableName="users" referencedColumnNames="user_id" />
+		<addForeignKeyConstraint constraintName="interva_icd10_mapping_voided_by"
+			baseTableName="interva_icd10_mapping" baseColumnNames="voided_by"
+			referencedTableName="users" referencedColumnNames="user_id" />
+		
+		<sql>
+INSERT INTO interva_icd10_mapping(interva_result,icd10_code,interva_code, display_text,creator,date_created) VALUES 
+ ('01.01 Sepsis (non-obstetric)','A40-A41','01.01','Sepsis (non-obstetric)',1,NOW()),
+ ('01.02 Acute resp infect incl pneumonia','J00-J22','01.02','Acute resp infect, incl pneumonia',1,NOW()),
+ ('01.03 HIV/AIDS related death','B20-B24','01.03','HIV/AIDS related death',1,NOW()),
+ ('01.04 Diarrhoeal diseases','A00-A09','01.04','Diarrhoeal diseases',1,NOW()),
+ ('01.05 Malaria','B50-B54','01.05','Malaria',1,NOW()),
+ ('01.06 Measles','B05','01.06','Measles',1,NOW()),
+ ('01.07 Meningitis and encephalitis','A39; G00-G05','01.07','Meningitis and encephalitis',1,NOW()),
+ ('01.08 &amp; 10.05 Tetanus','A33-A35','01.08, 10.05','10.05 Tetanus',1,NOW()),
+ ('01.09 Pulmonary tuberculosis','A15-A16','01.09','Pulmonary tuberculosis',1,NOW()),
+ ('01.10 Pertussis','A37','01.10','Pertussis',1,NOW()),
+ ('01.11 Haemorrhagic fever','A90-A99','01.11','Haemorrhagic fever',1,NOW()),
+ ('01.99 Other and unspecified infect dis','A17-A19; A20-A38; A42-A89; B00-B19; B25-B49; B55- B99','01.99','Other and unspecified infect dis',1,NOW()),
+ ('02.01 Oral neoplasms','C00-C06','02.01','Oral neoplasms',1,NOW()),
+ ('02.02 Digestive neoplasms','C15-C26','02.02','Digestive neoplasms',1,NOW()),
+ ('02.03 Respiratory neoplasms','C30-C39','02.03','Respiratory neoplasms',1,NOW()),
+ ('02.04 Breast neoplasms','C50','02.04','Breast neoplasms',1,NOW()),
+ ('02.05 &amp; 02.06 Reproductive neoplasms MF','C51-C58; C60-C63','02.05, 02.06','02.06 Reproductive neoplasms M, F',1,NOW()),
+ ('02.99 Other and unspecified neoplasms','C07-C14; C40-C49; C60-D48','02.99','Other and unspecified neoplasms',1,NOW()),
+ ('03.01 Severe anaemia','D50-D64','03.01','Severe anaemia',1,NOW()),
+ ('03.02 Severe malnutrition','E40-E46','03.02','Severe malnutrition',1,NOW()),
+ ('03.03 Diabetes mellitus','E10-E14','03.03','Diabetes mellitus',1,NOW()),
+ ('04.01 Acute cardiac disease','I20-I25','04.01','Acute cardiac disease',1,NOW()),
+ ('04.03 Sickle cell with crisis','I60-I69','04.03','Sickle cell with crisis',1,NOW()),
+ ('04.02 Stroke','D57','04.02','Stroke',1,NOW()),
+ ('04.99 Other and unspecified cardiac dis','I00-I09; I10-I15; I26-I52; I70-I99','04.99','Other and unspecified cardiac dis',1,NOW()),
+ ('05.01 Chronic obstructive pulmonary dis','J40-J44','05.01','Chronic obstructive pulmonary dis',1,NOW()),
+ ('05.02 Asthma','J45-J46','05.02','Asthma',1,NOW()),
+ ('06.01 Acute abdomen','R10','06.01','Acute abdomen',1,NOW()),
+ ('06.02 Liver cirrhosis','K70-K76','06.02','Liver cirrhosis',1,NOW()),
+ ('07.01 Renal failure','N17-N19','07.01','Renal failure',1,NOW()),
+ ('08.01 Epilepsy','G40-G41','08.01','Epilepsy',1,NOW()),
+ ('98 Other and unspecified NCD','D55-D89; E00-E07; E15-E35; E50-E90; F00-F99; G06- G09; GG10-G37; G50-G99; H00-H95; J30-J39; J47-J99; K00-K31; K35-K38; K40-K93; L00-L99; M00-M99; N00- N16; N20-N99; R00-R09; R11-R94','98','Other and unspecified NCD',1,NOW()),
+ ('09.01 Ectopic pregnancy','O00','09.01','Ectopic pregnancy',1,NOW()),
+ ('09.02 Abortion-related death','O03-O08','09.02','Abortion-related death',1,NOW()),
+ ('09.03 Pregnancy-induced hypertension','O10-O16','09.03','Pregnancy-induced hypertension',1,NOW()),
+ ('09.04 Obstetric haemorrhage','O46; O67; O72','09.04','Obstetric haemorrhage',1,NOW()),
+ ('09.05 Obstructed labour','O63-O66','09.05','Obstructed labour',1,NOW()),
+ ('09.06 Pregnancy-related sepsis','O85; O75.3','09.06','Pregnancy-related sepsis',1,NOW()),
+ ('09.07 Anaemia of pregnancy','O99.0','09.07','Anaemia of pregnancy',1,NOW()),
+ ('09.08 Ruptured uterus','O71','09.08','Ruptured uterus',1,NOW()),
+ ('09.99 Other and unspecified maternal CoD','O01-O02; O20-O45; O47-O62; O68-O70; O73-O84; O86-O99','09.99','Other and unspecified maternal CoD',1,NOW()),
+ ('10.01 Prematurity','P05-P07','10.01','Prematurity',1,NOW()),
+ ('10.02 Birth asphyxia','P20-P22','10.02','Birth asphyxia',1,NOW()),
+ ('10.03 Neonatal pneumonia','P23-P25','10.03','Neonatal pneumonia',1,NOW()),
+ ('10.04 Neonatal sepsis','P36','10.04','Neonatal sepsis',1,NOW()),
+ ('10.06 Congenital malformation','Q00-Q99','10.06','Congenital malformation',1,NOW()),
+ ('10.99 Other and unspecified neonatal CoD','P00-P04; P08-P15; P26-P35; P37-P94; P96','10.99','Other and unspecified neonatal CoD',1,NOW()),
+ ('11.01 Fresh stillbirth','P95','11.01','Fresh stillbirth',1,NOW()),
+ ('11.02 Macerated stillbirth','P95','11.02','Macerated stillbirth',1,NOW()),
+ ('12.01 Road traffic accident','V01-V89','12.01','Road traffic accident',1,NOW()),
+ ('12.02 Other transport accident','V90-V99','12.02','Other transport accident',1,NOW()),
+ ('12.03 Accid fall','W00-W19','12.03','Accid fall',1,NOW()),
+ ('12.04 Accid drowning and submersion','W65-W74','12.04','Accid drowning and submersion',1,NOW()),
+ ('12.05 Accid expos to smoke fire &amp; flame','X00-X19','12.05','Accid expos to smoke, fire &amp; flame',1,NOW()),
+ ('12.06 Contact with venomous plant/animal','X20-X29','12.06','Contact with venomous plant/animal',1,NOW()),
+ ('12.07 Accid poisoning and noxious subs','X40-X49','12.07','Accid poisoning and noxious subs',1,NOW()),
+ ('12.08 Intentional self-harm','X60-X84','12.08','Intentional self-harm',1,NOW()),
+ ('12.09 Assault','X85-Y09','12.09','Assault',1,NOW()),
+ ('12.10 Exposure to force of nature','X30-X39','12.10','Exposure to force of nature',1,NOW()),
+ ('12.99 Other and unspecified external CoD','S00-T99; W20-W64; W75-W99; X50-X59; Y10-Y98','12.99','Other and unspecified external CoD',1,NOW()),
+ ('99 Cause of death unknown','R95-R99','99','Cause of death unknown',1,NOW());
+		</sql>
+
+	</changeSet>
+
+
+
+
 </databaseChangeLog>

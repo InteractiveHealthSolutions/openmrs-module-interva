@@ -16,6 +16,7 @@ package org.openmrs.module.interva.api;
 import java.util.List;
 
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.interva.IntervaICD10Mapping;
 import org.openmrs.module.interva.IntervaInputMapping;
 import org.openmrs.module.interva.IntervaOutputMapping;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,4 +38,9 @@ public interface IntervaMappingService extends OpenmrsService {
 
 	List<IntervaOutputMapping> getIntervaOutputMappings(boolean readonly, int firstResult, int maxResults, String[] mappingsToJoin);
 
+	List<IntervaICD10Mapping> getIntervaICD10Mapping(boolean readonly, int firstResult, int maxResults, String[] mappingsToJoin);
+
+	IntervaICD10Mapping getIntervaICD10Mapping(int intervaICD10MappingId, boolean readonly);
+
+	IntervaICD10Mapping getIntervaICD10Mapping(String intervaResult, boolean readonly);
 }

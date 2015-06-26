@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+		"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.openmrs.module.interva">
+    <class name="IntervaICD10Mapping" table="${project.parent.artifactId}_icd10_mapping">
+        <id column="interva_icd10_mapping_id" name="intervaICD10MappingId" type="int" unsaved-value="0">
+            <generator class="native"/>
+        </id>
+	<property column="interva_result" name="intervaResult" type="java.lang.String"/>
+	<property column="interva_code" name="intervaCode" type="java.lang.String"/>
+	<property column="icd10_code" name="icd10Code" type="java.lang.String"/>
+	<property column="display_text" name="displayText" type="java.lang.String"/>
+	<property column="description" name="description" type="java.lang.String"/>
+
+	<many-to-one name="creator" class="org.openmrs.User" not-null="true" />
+	<property name="dateCreated" column="date_created" type="java.util.Date" not-null="true" />
+	<many-to-one name="changedBy" column="changed_by" class="org.openmrs.User" />
+	<property name="dateChanged" column="date_changed" type="java.util.Date" />
+	<property name="voided" column="voided" type="boolean" not-null="true" />
+	<many-to-one name="voidedBy" column="voided_by" class="org.openmrs.User" />
+	<property name="dateVoided" column="date_voided" type="java.util.Date" />
+	<property name="voidReason" column="void_reason" type="java.lang.String" />
+
+    </class>
+</hibernate-mapping>
+

@@ -26,7 +26,8 @@
 	</extension>
 	
 	<mappingFiles>
-        IntervaInputMapping.hbm.xml
+        IntervaICD10Mapping.hbm.xml
+	    IntervaInputMapping.hbm.xml
         IntervaOutputMapping.hbm.xml
     </mappingFiles>
     

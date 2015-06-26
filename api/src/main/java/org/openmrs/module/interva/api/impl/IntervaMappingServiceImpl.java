@@ -18,6 +18,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.interva.IntervaICD10Mapping;
 import org.openmrs.module.interva.IntervaInputMapping;
 import org.openmrs.module.interva.IntervaOutputMapping;
 import org.openmrs.module.interva.api.IntervaMappingService;
@@ -54,5 +55,21 @@ public class IntervaMappingServiceImpl extends BaseOpenmrsService implements Int
 	@Override
 	public List<IntervaOutputMapping> getIntervaOutputMappings(boolean readonly, int firstResult, int maxResults, String[] mappingsToJoin) {
 		return dao.getIntervaOutputMappings(readonly, firstResult, maxResults, mappingsToJoin);
+	}
+
+	@Override
+	public List<IntervaICD10Mapping> getIntervaICD10Mapping(boolean readonly,
+			int firstResult, int maxResults, String[] mappingsToJoin) {
+		return dao.getIntervaICD10Mapping(readonly, firstResult, maxResults, mappingsToJoin);
+	}
+
+	@Override
+	public IntervaICD10Mapping getIntervaICD10Mapping(int intervaICD10MappingId, boolean readonly) {
+		return dao.getIntervaICD10Mapping(intervaICD10MappingId, readonly);
+	}
+
+	@Override
+	public IntervaICD10Mapping getIntervaICD10Mapping(String intervaResult, boolean readonly) {
+		return dao.getIntervaICD10Mapping(intervaResult, readonly);
 	}
 }

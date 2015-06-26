@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -23,10 +22,7 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ModuleMustStartException;
-import org.openmrs.util.DatabaseUpdateException;
-import org.openmrs.util.InputRequiredException;
-import org.openmrs.util.OpenmrsUtil;
+import org.openmrs.module.interva.api.IntervaMappingService;
 
 import com.mysql.jdbc.StringUtils;
 
@@ -163,7 +159,8 @@ public class IntervaUtils {
 //					System.out.println(data.length + ":" + list.size());
 //					throw new IllegalArgumentException("Invalid number of variables in CSV at line "+line);
 //				}
-				
+				String[] causes = new String[3];
+
 				for (List<Object> list2 : list) {
 					Obs o = new Obs();
 					o.setObsGroup(codObs);
@@ -176,6 +173,18 @@ public class IntervaUtils {
 					
 					int valIndex = Integer.parseInt(list2.get(1).toString());
 					String val = valIndex < data.length ? data[valIndex] : null;
+					if(val != null){
+						if(list2.get(0).toString().toLowerCase().matches(".*cause.*1.*")){
+							causes[0] = val;
+						}
+						else if(list2.get(0).toString().toLowerCase().matches(".*cause.*2.*")){
+							causes[1] = val;
+						}
+						else if(list2.get(0).toString().toLowerCase().matches(".*cause.*3.*")){
+							causes[2] = val;
+						}
+						
+					}
 					if(!StringUtils.isEmptyOrWhitespaceOnly(val)){
 						if(list2.get(3).toString().toLowerCase().contains("text")){
 							o.setValueText(val);
@@ -185,6 +194,34 @@ public class IntervaUtils {
 						}
 					}
 					obs.add(o);
+				}
+				
+				for (int i = 0; i < 3; i++) {
+					try{
+						Concept concept = Context.getConceptService().getConcept("DEATH CAUSE "+(i+1)+" ICD-10");
+						String cod = causes[i];
+						if(concept != null && !StringUtils.isEmptyOrWhitespaceOnly(cod)){
+							IntervaICD10Mapping icd10 = Context.getService(IntervaMappingService.class).getIntervaICD10Mapping(cod, true);
+							System.out.println("ICD 10:::::::"+icd10);
+							if(icd10 != null){
+								System.out.println("setting icd 10 code"+icd10.getIcd10Code());
+								Obs o = new Obs();
+								o.setObsGroup(codObs);
+								o.setConcept(concept);
+								o.setPerson(new Person(patient.getPatientId()));
+								o.setCreator(creator);
+								o.setDateCreated(new Date());
+								o.setEncounter(encounter);
+								o.setObsDatetime(new Date());
+								o.setValueText(icd10.getIcd10Code());
+								
+								obs.add(o);
+							}
+						}
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 				
 				encounter.setObs(obs );
@@ -200,7 +237,7 @@ public class IntervaUtils {
 		return line;
 	}
 	
-	public static void main(String[] args) throws ModuleMustStartException, DatabaseUpdateException, InputRequiredException {
+	/*public static void main(String[] args) throws ModuleMustStartException, DatabaseUpdateException, InputRequiredException {
 		Properties props = OpenmrsUtil.getRuntimeProperties("openmrs");
 		
 		boolean usetest = true;
@@ -235,5 +272,5 @@ public class IntervaUtils {
 		} finally {
 			Context.closeSession();
 		}
-	}
+	}*/
 }

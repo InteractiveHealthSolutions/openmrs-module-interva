@@ -52,8 +52,9 @@ public class AdminList extends AdministrationSectionExt {
 		map.put("module/interva/iocsvhandler/uploadIntervaOutputForm.form", "Upload InterVA Output");
 		map.put("module/interva/iocsvhandler/intervaioactivityForm.form", "InterVA IO");
 
-		map.put("module/interva/iocsvhandler/parseIntervaOutput.form", "Parse InterVA Output");
+		//map.put("module/interva/iocsvhandler/parseIntervaOutput.form", "Parse InterVA Output");
 		map.put("module/interva/inputmappings/inputMapping.form", "Show INPUT mapping");
+		map.put("module/interva/inputmappings/icd10Mapping.form", "Show InterVA ICD 10 mapping");
 		map.put("module/interva/outputmappings/outputMapping.form", "Show OUTPUT mapping");
 
 		//map.put("module/basicmodule/basicmoduleLink.form", "basicmodule.replace.this.link.name");

@@ -21,6 +21,8 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.openmrs.module.interva.IntervaICD10Mapping;
 import org.openmrs.module.interva.IntervaInputMapping;
 import org.openmrs.module.interva.IntervaOutputMapping;
 import org.openmrs.module.interva.api.db.IntervaMappingDAO;
@@ -76,5 +78,37 @@ public class HibernateIntervaMappingDAO implements IntervaMappingDAO {
 
 		List<IntervaOutputMapping> list = cri.setFirstResult(firstResult).setMaxResults(maxResults).list();
 		return list;
+	}
+
+	@Override
+	public List<IntervaICD10Mapping> getIntervaICD10Mapping(boolean readonly, int firstResult, int maxResults, String[] mappingsToJoin) {
+		Criteria cri = sessionFactory.getCurrentSession().createCriteria(IntervaICD10Mapping.class)
+				.setReadOnly(readonly);
+
+		if (mappingsToJoin != null)
+			for (String mapping : mappingsToJoin) {
+				cri.setFetchMode(mapping, FetchMode.JOIN);
+			}
+
+		List<IntervaICD10Mapping> list = cri.setFirstResult(firstResult).setMaxResults(maxResults).list();
+		return list;
+	}
+
+	@Override
+	public IntervaICD10Mapping getIntervaICD10Mapping(int intervaICD10MappingId, boolean readonly) {
+		Criteria cri = sessionFactory.getCurrentSession().createCriteria(IntervaICD10Mapping.class)
+				.setReadOnly(readonly)
+				.add(Restrictions.eq("intervaICD10MappingId", intervaICD10MappingId));
+
+		return (IntervaICD10Mapping) cri.uniqueResult();
+	}
+
+	@Override
+	public IntervaICD10Mapping getIntervaICD10Mapping(String intervaResult, boolean readonly) {
+		Criteria cri = sessionFactory.getCurrentSession().createCriteria(IntervaICD10Mapping.class)
+				.setReadOnly(readonly)
+				.add(Restrictions.eq("intervaResult", intervaResult));
+
+		return (IntervaICD10Mapping) cri.uniqueResult();
 	}
 }

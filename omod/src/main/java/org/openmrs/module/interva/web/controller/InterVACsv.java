@@ -2,8 +2,6 @@ package org.openmrs.module.interva.web.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -20,9 +18,8 @@ import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleMustStartException;
-import org.openmrs.module.interva.Csvee;
-import org.openmrs.module.interva.CsveeRow;
-import org.openmrs.scheduler.SchedulerUtil;
+import org.openmrs.module.interva.IntervaICD10Mapping;
+import org.openmrs.module.interva.api.IntervaMappingService;
 import org.openmrs.util.DatabaseUpdateException;
 import org.openmrs.util.InputRequiredException;
 import org.openmrs.util.OpenmrsUtil;
@@ -30,7 +27,7 @@ import org.openmrs.util.OpenmrsUtil;
 import com.mysql.jdbc.StringUtils;
 
 public class InterVACsv {
-	public static void createCSV() throws IOException{
+	/*public static void createCSV() throws IOException{
 		
 		String sqlllll = "SELECT interva_output_variable, interva_output_index FROM interva_output_mapping WHERE is_observation = true ORDER BY interva_output_index";
 		List<List<Object>> listw = Context.getAdministrationService().executeSQL(sqlllll , true);
@@ -61,7 +58,7 @@ public class InterVACsv {
 		fop.write(csv.getCsv(true));
 		fop.flush();
 		fop.close();
-	}
+	}*/
 
 	public static void parseOutput() throws FileNotFoundException{
 		File file = new File("h:\\valog.txt"/*"h:\\intervaop_20140113.csv"*/);
@@ -133,7 +130,36 @@ public class InterVACsv {
 						o.setValueNumeric(Double.parseDouble(val));
 					}
 				}
+				
 				obs.add(o);
+			}
+			
+			for (int i = 0; i < 3; i++) {
+				try{
+					Concept concept = Context.getConceptService().getConcept("DEATH CAUSE "+(i+1)+" ICD-10");
+					String cod = data[i+7];
+					if(concept != null && !StringUtils.isEmptyOrWhitespaceOnly(cod)){
+						IntervaICD10Mapping icd10 = Context.getService(IntervaMappingService.class).getIntervaICD10Mapping(cod, true);
+						System.out.println("ICD 10:::::::"+icd10);
+						if(icd10 != null){
+							System.out.println("setting icd 10 code"+icd10.getIcd10Code());
+							Obs o = new Obs();
+							o.setObsGroup(codObs);
+							o.setConcept(concept);
+							o.setPerson(new Person(patient.getPatientId()));
+							o.setCreator(creator);
+							o.setDateCreated(new Date());
+							o.setEncounter(encounter);
+							o.setObsDatetime(new Date());
+							o.setValueText(icd10.getIcd10Code());
+							
+							obs.add(o);
+						}
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			
 			encounter.setObs(obs );
@@ -142,11 +168,10 @@ public class InterVACsv {
 		}
 		
 	}
-	
 	public static void main(String[] args) throws ModuleMustStartException, DatabaseUpdateException, InputRequiredException {
 		Properties props = OpenmrsUtil.getRuntimeProperties("openmrs");
 		
-		boolean usetest = true;
+		boolean usetest = false;
 		
 		if (usetest) {
 			props.put("connection.username", "root");
@@ -161,7 +186,7 @@ public class InterVACsv {
 		try {
 			Context.openSession();
 			Context.authenticate("admin", "Admin123");
-			createCSV();
+			//createCSV();
 			parseOutput();
 		} catch (Exception e) {
 			e.printStackTrace();
